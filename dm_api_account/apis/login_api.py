@@ -21,5 +21,5 @@ class LoginApi:
             json=json_data
         )
 
-        print(response.text)
+        print(response.json())
         return response
