@@ -6,7 +6,6 @@ class AccountApi:
         self.host = host
         self.headers = headers
 
-
     def post_v1_account(
             self,
             json_data
