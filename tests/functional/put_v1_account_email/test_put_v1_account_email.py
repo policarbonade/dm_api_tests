@@ -17,7 +17,7 @@ def test_put_v1_account_email():
     mailhog_api = MailhogApi(configuration=mailhog_configuration)
 
     # Регистрация пользователя
-    login = 'polinad45'
+    login = 'polinad49'
     password = '123456789'
     email = f'{login}@mail.ru'
     json_data = {
@@ -56,7 +56,7 @@ def test_put_v1_account_email():
     assert response.status_code == 200, f"Пользователь {login} не авторизован"
 
     # Смена емайл
-    email = f'{login}+11@mail.ru'
+    email = f'{login}+12@mail.ru'
     json_data = {
         'login': login,
         'password': password,
