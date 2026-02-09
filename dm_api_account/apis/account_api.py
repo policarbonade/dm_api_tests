@@ -1,11 +1,8 @@
 import requests
+from restclient.client import RestClient
 
 
-class AccountApi:
-    def __init__(self, host, headers=None):
-        self.host = host
-        self.headers = headers
-
+class AccountApi(RestClient):
     def post_v1_account(
             self,
             json_data
@@ -15,9 +12,9 @@ class AccountApi:
         :param json_data:
         :return:
         """
-        url = f"{self.host}/v1/account"
-        response = requests.post(
-            url=url,
+        url = f"/v1/account"
+        response = self.post(
+            path=url,
             json=json_data
         )
         return response
@@ -31,12 +28,12 @@ class AccountApi:
         :param token:
         :return:
         """
-        url = f"{self.host}/v1/account/{token}"
+        url = f"/v1/account/{token}"
         headers = {
             'Accept': 'text/plain'
         }
-        response = requests.put(
-            url=url,
+        response = self.put(
+            path=url,
             headers=headers,
             params=token
         )
@@ -51,9 +48,9 @@ class AccountApi:
         :param json_data:
         :return:
         """
-        url = f"{self.host}/v1/account/email"
-        response = requests.put(
-            url=url,
+        url = f"/v1/account/email"
+        response = self.put(
+            path=url,
             json=json_data
         )
 
