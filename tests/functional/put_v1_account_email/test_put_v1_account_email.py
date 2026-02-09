@@ -6,79 +6,47 @@ from api_mailhog.apis.mailhog_api import MailhogApi
 
 from restclient.configuration import Configuration as MailhogConfiguration
 from restclient.configuration import Configuration as DmApiConfiguration
+from services.api_mailhog import MailHogApi
+from services.dm_api_account import DmApiAccount
+from helpers.account_helper import AccountHelper
 
 
 def test_put_v1_account_email():
     mailhog_configuration = MailhogConfiguration(host='http://185.185.143.231:5025')
     dm_api_configuration = DmApiConfiguration(host='http://185.185.143.231:5051')
 
-    account_api = AccountApi(configuration=dm_api_configuration)
-    login_api = LoginApi(configuration=dm_api_configuration)
-    mailhog_api = MailhogApi(configuration=mailhog_configuration)
+    account = DmApiAccount(configuration=dm_api_configuration)
+    mailhog = MailHogApi(configuration=mailhog_configuration)
+
+    account_helper = AccountHelper(dm_account_api=account, mailhog=mailhog)
 
     # Регистрация пользователя
-    login = 'polinad57'
+    login = 'polinad62'
     password = '123456789'
     email = f'{login}@mail.ru'
-    json_data = {
-        'login': login,
-        'email': email,
-        'password': password,
-    }
 
-    response = account_api.post_v1_account(json_data=json_data)
-    assert response.status_code == 201, f"Пользователь не создан, {response.json()}"
-
-    # Получить письма с почтового сервера
-    response = mailhog_api.get_api_v2_messages()
-    pprint.pprint(response.json())
-    assert response.status_code == 200, "Письма не были получены"
-
-    # Получить активационный токен
-    token = get_activation_token_by_login(login, response)
-    pprint.pprint(response.json())
-    assert token is not None, f"Токен для пользователя {login} не был получен"
-
-    # Активация пользователя
-    response = account_api.put_v1_account_token(token=token)
-    pprint.pprint(response.json())
-    assert response.status_code == 200, f"Пользователь {login} не был активирован"
+    account_helper.register_user(email=email, password=password, login=login)
 
     # Авторизоваться
-    json_data = {
-        'login': login,
-        'password': password,
-        'rememberMe': True,
-    }
-
-    response = login_api.post_v1_account_login(json_data=json_data)
-    pprint.pprint(response.json())
-    assert response.status_code == 200, f"Пользователь {login} не авторизован"
+    account_helper.user_login(login=login, password=password, remember_me=True)
 
     # Смена емайл
-    email = f'{login}+21@mail.ru'
+    email = f'{login}+22@mail.ru'
     json_data = {
         'login': login,
         'password': password,
         'email': email,
     }
-    response = account_api.put_v1_account_email(json_data=json_data)
+    response = account.account_api.put_v1_account_email(json_data=json_data)
     pprint.pprint(response.json())
     assert response.status_code == 200, f"Смена почты для пользователя {login} неуспешна"
 
     # Попытка входа с 403 ошибкой
-    json_data = {
-        'login': login,
-        'password': password,
-        'rememberMe': True,
-    }
-
-    response = login_api.post_v1_account_login(json_data=json_data)
-    pprint.pprint(response.json())
+    response = account_helper.user_login(login=login, password=password, remember_me=True)
     assert response.status_code == 403, f"Пользователь {login} не авторизован"
 
     # Поиск нового активационного токена на почте. Получение письма, нахождение нужного токена
-    response = mailhog_api.get_api_v2_messages()
+    response = mailhog.mailhog_api.get_api_v2_messages()
     pprint.pprint(response.json())
     assert response.status_code == 200, "Письма не были получены"
 
@@ -87,20 +55,12 @@ def test_put_v1_account_email():
     assert token is not None, f"Токен для пользователя {login} не был получен"
 
     # Активация обновленного пользователя
-    response = account_api.put_v1_account_token(token=token)
+    response = account.account_api.put_v1_account_token(token=token)
     pprint.pprint(response.json())
     assert response.status_code == 200, f"Пользователь {login} не был активирован"
 
     # Повторная попытка авторизации
-    json_data = {
-        'login': login,
-        'password': password,
-        'rememberMe': True,
-    }
-
-    response = login_api.post_v1_account_login(json_data=json_data)
-    pprint.pprint(response.json())
-    assert response.status_code == 200, f"Пользователь {login} не авторизован"
+    account_helper.user_login(login=login, password=password, remember_me=True)
 
 
 def get_activation_token_by_login(
