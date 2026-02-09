@@ -17,7 +17,7 @@ def test_post_v1_account_token():
     mailhog_api = MailhogApi(configuration=mailhog_configuration)
 
     # Регистрация пользователя
-    login = 'polinad50'
+    login = 'polinad58'
     password = '123456789'
     email = f'{login}@mail.ru'
     json_data = {
