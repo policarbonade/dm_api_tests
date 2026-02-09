@@ -12,9 +12,9 @@ class LoginApi(RestClient):
         :param json_data:
         :return:
         """
-        url = f"/v1/account/login"
+
         response = self.post(
-            path=url,
+            path="/v1/account/login",
             json=json_data
         )
 

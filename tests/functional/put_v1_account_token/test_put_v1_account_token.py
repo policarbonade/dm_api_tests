@@ -17,7 +17,7 @@ def test_post_v1_account_token():
     mailhog_api = MailhogApi(configuration=mailhog_configuration)
 
     # Регистрация пользователя
-    login = 'polinad42'
+    login = 'polinad46'
     password = '123456789'
     email = f'{login}@mail.ru'
     json_data = {
@@ -30,7 +30,7 @@ def test_post_v1_account_token():
     assert response.status_code == 201, f"Пользователь не создан, {response.json()}"
 
     # Получить письма с почтового сервера
-    response = mailhog_api.get_api_mailhog_messages()
+    response = mailhog_api.get_api_v2_messages()
     assert response.status_code == 200, "Письма не были получены"
     pprint.pprint(response.json())
 

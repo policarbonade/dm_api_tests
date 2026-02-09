@@ -17,7 +17,7 @@ def test_put_v1_account_email():
     mailhog_api = MailhogApi(configuration=mailhog_configuration)
 
     # Регистрация пользователя
-    login = 'polinad41'
+    login = 'polinad45'
     password = '123456789'
     email = f'{login}@mail.ru'
     json_data = {
@@ -30,7 +30,7 @@ def test_put_v1_account_email():
     assert response.status_code == 201, f"Пользователь не создан, {response.json()}"
 
     # Получить письма с почтового сервера
-    response = mailhog_api.get_api_mailhog_messages()
+    response = mailhog_api.get_api_v2_messages()
     pprint.pprint(response.json())
     assert response.status_code == 200, "Письма не были получены"
 
@@ -78,7 +78,7 @@ def test_put_v1_account_email():
     assert response.status_code == 403, f"Пользователь {login} не авторизован"
 
     # Поиск нового активационного токена на почте. Получение письма, нахождение нужного токена
-    response = mailhog_api.get_api_mailhog_messages()
+    response = mailhog_api.get_api_v2_messages()
     pprint.pprint(response.json())
     assert response.status_code == 200, "Письма не были получены"
 
