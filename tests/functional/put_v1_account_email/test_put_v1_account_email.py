@@ -5,6 +5,23 @@ from restclient.configuration import Configuration as DmApiConfiguration
 from services.api_mailhog import MailHogApi
 from services.dm_api_account import DmApiAccount
 from helpers.account_helper import AccountHelper
+import time
+
+
+def retryer(func):
+    def wrapper(*args, **kwargs):
+        token = None
+        count = 0
+        while token is None:
+            print(f"Попытка получения токена номер {count}")
+            token = func(*args, **kwargs)
+            if token:
+                return token
+            count += 1
+            if count == 5:
+                raise AssertionError("Превышено кол-во попыток получения активационного токена")
+            time.sleep(1)
+    return wrapper
 
 
 def test_put_v1_account_email():
@@ -17,7 +34,7 @@ def test_put_v1_account_email():
     account_helper = AccountHelper(dm_account_api=account, mailhog=mailhog)
 
     # Регистрация пользователя
-    login = 'polinad62'
+    login = 'polinad74'
     password = '123456789'
     email = f'{login}@mail.ru'
 
@@ -27,7 +44,7 @@ def test_put_v1_account_email():
     account_helper.user_login(login=login, password=password, remember_me=True)
 
     # Смена емайл
-    email = f'{login}+22@mail.ru'
+    email = f'{login}+24@mail.ru'
     json_data = {
         'login': login,
         'password': password,
@@ -59,6 +76,7 @@ def test_put_v1_account_email():
     account_helper.user_login(login=login, password=password, remember_me=True)
 
 
+@retryer
 def get_activation_token_by_login(
         login,
         response

@@ -19,7 +19,7 @@ def test_post_v1_account():
     account = DmApiAccount(configuration=dm_api_configuration)
 
     # Регистрация пользователя
-    login = 'polinad63'
+    login = 'polinad73'
     password = '123456789'
     email = f'{login}@mail.ru'
     json_data = {
