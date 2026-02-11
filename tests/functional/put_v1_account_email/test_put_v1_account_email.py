@@ -1,5 +1,8 @@
 import pprint
 from json import loads
+
+import pytest
+
 from restclient.configuration import Configuration as MailhogConfiguration
 from restclient.configuration import Configuration as DmApiConfiguration
 from services.api_mailhog import MailHogApi
@@ -24,19 +27,11 @@ def retryer(func):
     return wrapper
 
 
-def test_put_v1_account_email():
-    mailhog_configuration = MailhogConfiguration(host='http://185.185.143.231:5025')
-    dm_api_configuration = DmApiConfiguration(host='http://185.185.143.231:5051')
-
-    account = DmApiAccount(configuration=dm_api_configuration)
-    mailhog = MailHogApi(configuration=mailhog_configuration)
-
-    account_helper = AccountHelper(dm_account_api=account, mailhog=mailhog)
-
+def test_put_v1_account_email(prepare_user, account_helper):
     # Регистрация пользователя
-    login = 'polinad74'
-    password = '123456789'
-    email = f'{login}@mail.ru'
+    login = prepare_user.login
+    password = prepare_user.password
+    email = prepare_user.email
 
     account_helper.register_user(email=email, password=password, login=login)
 
@@ -50,16 +45,20 @@ def test_put_v1_account_email():
         'password': password,
         'email': email,
     }
-    response = account.account_api.put_v1_account_email(json_data=json_data)
+    response = account_helper.dm_account_api.account_api.put_v1_account_email(json_data=json_data)
     pprint.pprint(response.json())
     assert response.status_code == 200, f"Смена почты для пользователя {login} неуспешна"
 
     # Попытка входа с 403 ошибкой
-    response = account_helper.user_login(login=login, password=password, remember_me=True)
+    response = account_helper.dm_account_api.login_api.post_v1_account_login(json_data={
+        "login": login,
+        "password": password,
+        "remember_me": True
+    })
     assert response.status_code == 403, f"Пользователь {login} не авторизован"
 
     # Поиск нового активационного токена на почте. Получение письма, нахождение нужного токена
-    response = mailhog.mailhog_api.get_api_v2_messages()
+    response = account_helper.mailhog.mailhog_api.get_api_v2_messages()
     pprint.pprint(response.json())
     assert response.status_code == 200, "Письма не были получены"
 
@@ -68,7 +67,7 @@ def test_put_v1_account_email():
     assert token is not None, f"Токен для пользователя {login} не был получен"
 
     # Активация обновленного пользователя
-    response = account.account_api.put_v1_account_token(token=token)
+    response = account_helper.dm_account_api.account_api.put_v1_account_token(token=token)
     pprint.pprint(response.json())
     assert response.status_code == 200, f"Пользователь {login} не был активирован"
 
