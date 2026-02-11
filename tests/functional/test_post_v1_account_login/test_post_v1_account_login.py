@@ -5,7 +5,7 @@ from services.api_mailhog import MailHogApi
 from services.dm_api_account import DmApiAccount
 
 
-def test_post_v1_account_login():
+def test_post_v1_account_login(prepare_user):
     mailhog_configuration = MailhogConfiguration(host='http://185.185.143.231:5025')
     dm_api_configuration = DmApiConfiguration(host='http://185.185.143.231:5051')
 
@@ -15,9 +15,9 @@ def test_post_v1_account_login():
     account_helper = AccountHelper(dm_account_api=account, mailhog=mailhog)
 
     # Регистрация пользователя
-    login = 'polinad76'
-    password = '123456789'
-    email = f'{login}@mail.ru'
+    login = prepare_user.login
+    password = prepare_user.password
+    email = prepare_user.email
 
     account_helper.register_user(login=login, password=password, email=email)
     account_helper.user_login(login=login, password=password, remember_me=True)
