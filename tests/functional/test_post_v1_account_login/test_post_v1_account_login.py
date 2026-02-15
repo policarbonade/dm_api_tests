@@ -20,4 +20,5 @@ def test_post_v1_account_login(prepare_user):
     email = prepare_user.email
 
     account_helper.register_user(login=login, password=password, email=email)
-    account_helper.user_login(login=login, password=password, remember_me=True)
+    response = account_helper.user_login(login=login, password=password, remember_me=True)
+    assert response.status_code == 200, "User is not authorized"
