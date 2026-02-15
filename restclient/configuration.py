@@ -3,7 +3,7 @@ class Configuration:
             self,
             host: str,
             headers: dict = None,
-            disable_log: bool = True
+            disable_log: bool = False
     ):
         self.host = host
         self.headers = headers

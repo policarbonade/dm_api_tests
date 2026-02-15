@@ -55,3 +55,18 @@ class AccountApi(RestClient):
 
         print(response.json())
         return response
+
+    def get_v1_account(
+            self,
+            **kwargs
+    ):
+        """
+        Get current user
+        :return:
+        """
+        url = f"/v1/account"
+        response = self.get(
+            path=url,
+            **kwargs
+        )
+        return response

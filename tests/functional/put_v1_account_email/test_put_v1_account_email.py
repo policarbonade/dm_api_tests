@@ -11,20 +11,6 @@ from helpers.account_helper import AccountHelper
 import time
 
 
-def retryer(func):
-    def wrapper(*args, **kwargs):
-        token = None
-        count = 0
-        while token is None:
-            print(f"Попытка получения токена номер {count}")
-            token = func(*args, **kwargs)
-            if token:
-                return token
-            count += 1
-            if count == 5:
-                raise AssertionError("Превышено кол-во попыток получения активационного токена")
-            time.sleep(1)
-    return wrapper
 
 
 def test_put_v1_account_email(prepare_user, account_helper):
@@ -75,7 +61,6 @@ def test_put_v1_account_email(prepare_user, account_helper):
     account_helper.user_login(login=login, password=password, remember_me=True)
 
 
-@retryer
 def get_activation_token_by_login(
         login,
         response
