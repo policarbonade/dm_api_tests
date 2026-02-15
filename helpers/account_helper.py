@@ -57,6 +57,26 @@ class AccountHelper:
             print(token)
         return token
 
+    def get_reset_token_by_login(
+            self,
+            login: str
+    ):
+        auth_token = None
+        response = self.mailhog.mailhog_api.get_api_v2_messages()
+        for item in response.json()['items']:
+            user_data = loads(item['Content']['Body'])
+            user_login = user_data['Login']
+            print(f'USERDATALOGIN {user_data}')
+            if user_login == login:
+                try:
+                    auth_token = user_data['ConfirmationLinkUri'].split('/')[-1]
+                    print("Element is found")
+                    break
+                except KeyError:
+                    print("Element not found")
+            print(auth_token)
+        return auth_token
+
     def auth_client(
             self,
             login: str,
@@ -74,15 +94,37 @@ class AccountHelper:
     def change_password(
             self,
             login: str,
-            password: str,
-            email: str
+            header_token: str,
+            old_password: str,
+            new_password: str
     ):
+
+        self.dm_account_api.account_api.post_v1_account_password(
+            json={
+                "login": f"{login}",
+                "email": f"{login}@mail.ru"
+            }
+        )
+
+        auth_token = self.get_reset_token_by_login(
+            login=login
+        )
+        assert auth_token is not None, f"Обновленный токен для пользователя {login} не был получен"
 
         json_data = {
             'login': login,
-            'password': password,
-            'email': f'{login}+24@mail.ru',
+            'token': auth_token,
+            'oldPassword': old_password,
+            'newPassword': new_password
         }
-        response = account_helper.account_api.put_v1_account_email(json_data=json_data)
-        pprint.pprint(response.json())
-        assert response.status_code == 200, f"Смена почты для пользователя {login} неуспешна"
+
+        headers = {
+            "X-Dm-Auth-Token": header_token
+        }
+
+        response = self.dm_account_api.account_api.put_v1_account_password(
+            json=json_data,
+            headers=headers
+        )
+
+        assert response.status_code == 200, f"Смена емайл для пользователя {login} неуспешна"

@@ -64,8 +64,8 @@ def prepare_user():
 
 
 @pytest.fixture
-def prepare_email():
+def prepare_password():
     now = datetime.now()
     date = now.strftime('%d_%m_%Y_%H_%M_%S')
-    email = f'polinad_{date}@mail.ru'
-    return email
+    password = date
+    return password

@@ -70,3 +70,37 @@ class AccountApi(RestClient):
             **kwargs
         )
         return response
+
+    def put_v1_account_password(
+            self,
+            **kwargs
+    ):
+        """
+        Change registered user email
+        :return:
+        """
+        url = f"/v1/account/password"
+        response = self.put(
+            path=url,
+            **kwargs
+        )
+
+        print(response.json())
+        return response
+
+    def post_v1_account_password(
+        self,
+        **kwargs
+    ):
+        """
+        Reset registered user email
+        :return:
+        """
+        url = f"/v1/account/password"
+        response = self.post(
+            path=url,
+            **kwargs
+        )
+
+        print(response.json())
+        return response
