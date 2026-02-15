@@ -90,6 +90,7 @@ class AccountHelper:
         }
         self.dm_account_api.account_api.set_headers(token)
         self.dm_account_api.login_api.set_headers(token)
+        return token
 
     def change_password(
             self,
@@ -128,3 +129,17 @@ class AccountHelper:
         )
 
         assert response.status_code == 200, f"Смена емайл для пользователя {login} неуспешна"
+
+    def logout(
+            self,
+            header_token: dict
+    ):
+        response = self.dm_account_api.account_api.delete_v1_account_login(headers=header_token)
+        assert response.status_code == 204, f"User is not logged out"
+
+    def logout_all(
+            self,
+            header_token: dict
+    ):
+        response = self.dm_account_api.account_api.delete_v1_account_login_all(headers=header_token)
+        assert response.status_code == 204, f"User is not logged out out of every session"
