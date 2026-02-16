@@ -5,15 +5,7 @@ from services.api_mailhog import MailHogApi
 from services.dm_api_account import DmApiAccount
 
 
-def test_post_v1_account_login(prepare_user):
-    mailhog_configuration = MailhogConfiguration(host='http://185.185.143.231:5025')
-    dm_api_configuration = DmApiConfiguration(host='http://185.185.143.231:5051')
-
-    account = DmApiAccount(configuration=dm_api_configuration)
-    mailhog = MailHogApi(configuration=mailhog_configuration)
-
-    account_helper = AccountHelper(dm_account_api=account, mailhog=mailhog)
-
+def test_post_v1_account_login(prepare_user, account_helper):
     # Регистрация пользователя
     login = prepare_user.login
     password = prepare_user.password

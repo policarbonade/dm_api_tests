@@ -95,26 +95,35 @@ class AccountHelper:
     def change_password(
             self,
             login: str,
-            header_token: str,
+            email: str,
             old_password: str,
             new_password: str
     ):
 
+        # Authorization
+        response = self.user_login(
+            login=login,
+            password=old_password
+        )
+
+        # Смена пароля с пробросом авторизационного токена в хэдэры
+        header_token = response.headers["X-Dm-Auth-Token"]
+
         self.dm_account_api.account_api.post_v1_account_password(
             json={
                 "login": f"{login}",
-                "email": f"{login}@mail.ru"
+                "email": f"{email}"
             }
         )
 
-        auth_token = self.get_reset_token_by_login(
+        reset_token = self.get_reset_token_by_login(
             login=login
         )
-        assert auth_token is not None, f"Обновленный токен для пользователя {login} не был получен"
+        assert reset_token is not None, f"Обновленный токен для пользователя {login} не был получен"
 
         json_data = {
             'login': login,
-            'token': auth_token,
+            'token': reset_token,
             'oldPassword': old_password,
             'newPassword': new_password
         }
@@ -129,17 +138,32 @@ class AccountHelper:
         )
 
         assert response.status_code == 200, f"Смена емайл для пользователя {login} неуспешна"
+        return response
 
-    def logout(
-            self,
-            header_token: dict
-    ):
-        response = self.dm_account_api.account_api.delete_v1_account_login(headers=header_token)
+    def logout(self):
+        response = self.dm_account_api.account_api.delete_v1_account_login()
         assert response.status_code == 204, f"User is not logged out"
 
-    def logout_all(
-            self,
-            header_token: dict
-    ):
-        response = self.dm_account_api.account_api.delete_v1_account_login_all(headers=header_token)
+    def logout_all(self):
+        response = self.dm_account_api.account_api.delete_v1_account_login_all()
         assert response.status_code == 204, f"User is not logged out out of every session"
+
+    def get_account(self):
+        response = self.dm_account_api.account_api.get_v1_account()
+        return response
+
+    def put_account_email(self, json_data):
+        response = self.dm_account_api.account_api.put_v1_account_email(json_data=json_data)
+        return response
+
+    def activate(self, login):
+        # Поиск нового активационного токена на почте. Получение письма, нахождение нужного токена
+        response = self.mailhog.mailhog_api.get_api_v2_messages()
+        assert response.status_code == 200, "Письма не были получены"
+
+        token = self.get_activation_token_by_login(login)
+        assert token is not None, f"Токен для пользователя не был получен"
+
+        # Активация обновленного пользователя
+        response = self.dm_account_api.account_api.put_v1_account_token(token=token)
+        assert response.status_code == 200, f"Пользователь не был активирован"
