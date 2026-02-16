@@ -4,4 +4,3 @@ def test_post_v1_account(account_helper, prepare_user):
     email = prepare_user.email
     response = account_helper.register_user(login=login, password=password, email=email)
     account_helper.user_login(login=login, password=password)
-
