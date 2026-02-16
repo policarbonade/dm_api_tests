@@ -1,3 +1,4 @@
+import time
 from services.dm_api_account import DmApiAccount
 from services.api_mailhog import MailHogApi
 from json import loads
@@ -24,7 +25,10 @@ class AccountHelper:
 
         response = self.dm_account_api.account_api.post_v1_account(json_data=json_data)
         assert response.status_code == 201, f"Пользователь не создан, {response.json()}"
+        start_time = time.time()
         token = self.get_activation_token_by_login(login=login)
+        end_time = time.time()
+        assert end_time - start_time < 3, "Время активации превышено"
         assert token is not None, f"Токен для пользователя {login} не был получен"
         response = self.dm_account_api.account_api.put_v1_account_token(token=token)
         assert response.status_code == 200, f"Пользователь {login} не был активирован"
@@ -40,6 +44,7 @@ class AccountHelper:
         response = self.dm_account_api.login_api.post_v1_account_login(json_data=json_data)
         # Закомменченно, так как подходит не для всех тестов, где-то жду 403
         # assert response.status_code == 200, f"Пользователь {login} не авторизован"
+        assert response.headers["x-dm-auth-token"], "Токен для пользователя не был получен"
         return response
 
     @retry(stop_max_attempt_number=5, retry_on_result=retry_if_result_none, wait_fixed=1000)
@@ -82,9 +87,7 @@ class AccountHelper:
             login: str,
             password: str
     ):
-        response = self.dm_account_api.login_api.post_v1_account_login(
-            json_data={"login": login, "password": password}
-        )
+        response = self.user_login(login=login, password=password)
         token = {
             "x-dm-auth-token": response.headers["x-dm-auth-token"]
         }
