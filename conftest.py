@@ -54,7 +54,7 @@ def auth_account_helper(mailhog_api):
 @pytest.fixture
 def prepare_user():
     now = datetime.now()
-    date = now.strftime('%d_%m_%Y_%H_%M_%S')
+    date = now.strftime('%d_%m_%Y_%H_%M_%S_%f')
     login = f'polinad_{date}'
     password = '123456789'
     email = f'{login}@mail.ru'

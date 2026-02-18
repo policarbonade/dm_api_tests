@@ -141,11 +141,11 @@ class AccountHelper:
         return response
 
     def logout(self):
-        response = self.dm_account_api.account_api.delete_v1_account_login()
+        response = self.dm_account_api.login_api.delete_v1_account_login()
         assert response.status_code == 204, f"User is not logged out"
 
     def logout_all(self):
-        response = self.dm_account_api.account_api.delete_v1_account_login_all()
+        response = self.dm_account_api.login_api.delete_v1_account_login_all()
         assert response.status_code == 204, f"User is not logged out out of every session"
 
     def get_account(self):
