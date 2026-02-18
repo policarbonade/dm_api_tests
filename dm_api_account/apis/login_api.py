@@ -1,14 +1,17 @@
 from models.login_credentials import LoginCredentials
+from models.user_envelope import UserEnvelope
 from restclient.client import RestClient
 
 
 class LoginApi(RestClient):
     def post_v1_account_login(
             self,
-            login_credentials=LoginCredentials
+            login_credentials=LoginCredentials,
+            is_validated=True
     ):
         """
         Authenticate via credentials
+        :param is_validated:
         :param login_credentials:
         :return:
         """
@@ -17,7 +20,8 @@ class LoginApi(RestClient):
             path="/v1/account/login",
             json=login_credentials.model_dump(exclude_none=True, by_alias=True)
         )
-
+        if is_validated:
+            UserEnvelope(**response.json())
         return response
 
     def delete_v1_account_login(

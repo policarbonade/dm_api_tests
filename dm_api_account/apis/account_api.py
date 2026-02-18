@@ -1,6 +1,8 @@
 from models.change_password import ChangePassword
 from models.registration import Registration
 from models.reset_password import ResetPassword
+from models.user_details_envelope import UserDetailsEnvelope
+from models.user_envelope import UserEnvelope
 from restclient.client import RestClient
 
 
@@ -39,6 +41,7 @@ class AccountApi(RestClient):
             headers=headers,
             params=token
         )
+        UserEnvelope(**response.json())
         return response
 
     def put_v1_account_email(
@@ -55,7 +58,7 @@ class AccountApi(RestClient):
             path=url,
             json=registration.model_dump(exclude_none=True, by_alias=True)
         )
-
+        UserEnvelope(**response.json())
         return response
 
     def get_v1_account(
@@ -71,6 +74,7 @@ class AccountApi(RestClient):
             path=url,
             **kwargs
         )
+        UserDetailsEnvelope(**response.json())
         return response
 
     def put_v1_account_password(
@@ -88,7 +92,7 @@ class AccountApi(RestClient):
             json=change_password.model_dump(exclude_none=True, by_alias=True),
             **kwargs
         )
-
+        UserEnvelope(**response.json())
         return response
 
     def post_v1_account_password(
@@ -106,5 +110,5 @@ class AccountApi(RestClient):
             json=reset_password.model_dump(exclude_none=True),
             **kwargs
         )
-
+        UserEnvelope(**response.json())
         return response

@@ -41,7 +41,8 @@ class AccountHelper:
             remember_me=remember_me
         )
 
-        response = self.dm_account_api.login_api.post_v1_account_login(login_credentials=login_credentials)
+        response = self.dm_account_api.login_api.post_v1_account_login(login_credentials=login_credentials,
+                                                                       is_validated=False)
         # Закомменченно, так как подходит не для всех тестов, где-то жду 403
         # assert response.status_code == 200, f"Пользователь {login} не авторизован"
         return response
@@ -60,7 +61,7 @@ class AccountHelper:
                 if user_login == login:
                     token = user_data['ConfirmationLinkUrl'].split('/')[-1]
             except Exception:
-                print("Битый формат ответа")
+                print("Битый формат ответа почтового сервиса")
         return token
 
     def get_reset_token_by_login(
