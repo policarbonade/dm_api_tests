@@ -1,3 +1,5 @@
+from models.change_password import ChangePassword
+from models.login_credentials import LoginCredentials
 from models.registration import Registration
 from models.reset_password import ResetPassword
 from services.dm_api_account import DmApiAccount
@@ -33,13 +35,13 @@ class AccountHelper:
         return response
 
     def user_login(self, login: str, password: str, remember_me: bool = True):
-        json_data = {
-            'login': login,
-            'password': password,
-            'rememberMe': remember_me,
-        }
+        login_credentials = LoginCredentials(
+            login=login,
+            password=password,
+            remember_me=remember_me
+        )
 
-        response = self.dm_account_api.login_api.post_v1_account_login(json_data=json_data)
+        response = self.dm_account_api.login_api.post_v1_account_login(login_credentials=login_credentials)
         # Закомменченно, так как подходит не для всех тестов, где-то жду 403
         # assert response.status_code == 200, f"Пользователь {login} не авторизован"
         return response
@@ -86,9 +88,12 @@ class AccountHelper:
             login: str,
             password: str
     ):
-        response = self.dm_account_api.login_api.post_v1_account_login(
-            json_data={"login": login, "password": password}
+        login_credentials = LoginCredentials(
+            login=login,
+            password=password,
+            remember_me=True
         )
+        response = self.dm_account_api.login_api.post_v1_account_login(login_credentials=login_credentials)
         token = {
             "x-dm-auth-token": response.headers["x-dm-auth-token"]
         }
@@ -125,19 +130,19 @@ class AccountHelper:
         )
         assert reset_token is not None, f"Обновленный токен для пользователя {login} не был получен"
 
-        json_data = {
-            'login': login,
-            'token': reset_token,
-            'oldPassword': old_password,
-            'newPassword': new_password
-        }
+        change_password = ChangePassword(
+            login=login,
+            token=reset_token,
+            old_password=old_password,
+            new_password=new_password
+        )
 
         headers = {
             "X-Dm-Auth-Token": header_token
         }
 
         response = self.dm_account_api.account_api.put_v1_account_password(
-            json=json_data,
+            change_password=change_password,
             headers=headers
         )
 

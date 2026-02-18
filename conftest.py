@@ -66,6 +66,6 @@ def prepare_user():
 @pytest.fixture
 def prepare_password():
     now = datetime.now()
-    date = now.strftime('%d_%m_%Y_%H_%M_%S')
+    date = now.strftime('%d_%m_%Y_%H_%M_%S_%f')
     password = date
     return password

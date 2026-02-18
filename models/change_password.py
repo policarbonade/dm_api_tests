@@ -2,7 +2,7 @@ from pydantic import BaseModel, Field, ConfigDict
 
 
 class ChangePassword(BaseModel):
-    model_config = ConfigDict(extra='forbid')
+    model_config = ConfigDict(populate_by_name=True)
 
     login: str = Field(...)
     token: str = Field(...)
