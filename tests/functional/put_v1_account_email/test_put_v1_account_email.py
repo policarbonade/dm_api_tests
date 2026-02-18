@@ -24,12 +24,7 @@ def test_put_v1_account_email(prepare_user, account_helper):
 
     # Смена емайл
     email = f'{login}+24@mail.ru'
-    json_data = {
-        'login': login,
-        'password': password,
-        'email': email,
-    }
-    response = account_helper.put_account_email(json_data=json_data)
+    response = account_helper.put_account_email(login, password, email)
     assert response.status_code == 200, f"Смена почты для пользователя {login} неуспешна"
 
     # Попытка входа с 403 ошибкой

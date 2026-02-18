@@ -1,3 +1,5 @@
+from models.registration import Registration
+from models.reset_password import ResetPassword
 from services.dm_api_account import DmApiAccount
 from services.api_mailhog import MailHogApi
 from json import loads
@@ -16,13 +18,13 @@ class AccountHelper:
 
     def register_user(self, login:str, password:str, email:str):
 
-        json_data = {
-            'login': login,
-            'email': email,
-            'password': password,
-        }
+        registration = Registration(
+            login=login,
+            email=email,
+            password=password
+        )
 
-        response = self.dm_account_api.account_api.post_v1_account(json_data=json_data)
+        response = self.dm_account_api.account_api.post_v1_account(registration=registration)
         assert response.status_code == 201, f"Пользователь не создан, {response.json()}"
         token = self.get_activation_token_by_login(login=login)
         assert token is not None, f"Токен для пользователя {login} не был получен"
@@ -50,11 +52,13 @@ class AccountHelper:
         token = None
         response = self.mailhog.mailhog_api.get_api_v2_messages()
         for item in response.json()['items']:
-            user_data = loads(item['Content']['Body'])
-            user_login = user_data['Login']
-            if user_login == login:
-                token = user_data['ConfirmationLinkUrl'].split('/')[-1]
-            print(token)
+            try:
+                user_data = loads(item['Content']['Body'])
+                user_login = user_data['Login']
+                if user_login == login:
+                    token = user_data['ConfirmationLinkUrl'].split('/')[-1]
+            except Exception:
+                print("Битый формат ответа")
         return token
 
     def get_reset_token_by_login(
@@ -109,12 +113,12 @@ class AccountHelper:
         # Смена пароля с пробросом авторизационного токена в хэдэры
         header_token = response.headers["X-Dm-Auth-Token"]
 
-        self.dm_account_api.account_api.post_v1_account_password(
-            json={
-                "login": f"{login}",
-                "email": f"{email}"
-            }
+        reset_password = ResetPassword(
+            login=login,
+            email=email
         )
+
+        self.dm_account_api.account_api.post_v1_account_password(reset_password=reset_password)
 
         reset_token = self.get_reset_token_by_login(
             login=login
@@ -152,8 +156,13 @@ class AccountHelper:
         response = self.dm_account_api.account_api.get_v1_account()
         return response
 
-    def put_account_email(self, json_data):
-        response = self.dm_account_api.account_api.put_v1_account_email(json_data=json_data)
+    def put_account_email(self, login, password, email):
+        registration = Registration(
+            login=login,
+            password=password,
+            email=email
+        )
+        response = self.dm_account_api.account_api.put_v1_account_email(registration=registration)
         return response
 
     def activate(self, login):

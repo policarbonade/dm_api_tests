@@ -1,20 +1,23 @@
+from models.change_password import ChangePassword
+from models.registration import Registration
+from models.reset_password import ResetPassword
 from restclient.client import RestClient
 
 
 class AccountApi(RestClient):
     def post_v1_account(
             self,
-            json_data
+            registration: Registration
     ):
         """
         Register new user
-        :param json_data:
+        :param registration:
         :return:
         """
         url = f"/v1/account"
         response = self.post(
             path=url,
-            json=json_data
+            json=registration.model_dump(exclude_none=True, by_alias=True)
         )
         return response
 
@@ -40,7 +43,7 @@ class AccountApi(RestClient):
 
     def put_v1_account_email(
             self,
-            json_data
+            registration: Registration
     ):
         """
         Change registered user email
@@ -50,10 +53,9 @@ class AccountApi(RestClient):
         url = f"/v1/account/email"
         response = self.put(
             path=url,
-            json=json_data
+            json=registration.model_dump(exclude_none=True, by_alias=True)
         )
 
-        print(response.json())
         return response
 
     def get_v1_account(
@@ -73,6 +75,7 @@ class AccountApi(RestClient):
 
     def put_v1_account_password(
             self,
+            change_password: ChangePassword,
             **kwargs
     ):
         """
@@ -82,14 +85,15 @@ class AccountApi(RestClient):
         url = f"/v1/account/password"
         response = self.put(
             path=url,
+            json=change_password.model_dump(exclude_none=True, by_alias=True),
             **kwargs
         )
 
-        print(response.json())
         return response
 
     def post_v1_account_password(
         self,
+        reset_password: ResetPassword,
         **kwargs
     ):
         """
@@ -99,8 +103,8 @@ class AccountApi(RestClient):
         url = f"/v1/account/password"
         response = self.post(
             path=url,
+            json=reset_password.model_dump(exclude_none=True),
             **kwargs
         )
 
-        print(response.json())
         return response
