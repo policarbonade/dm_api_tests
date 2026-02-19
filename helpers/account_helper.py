@@ -34,17 +34,30 @@ class AccountHelper:
         assert response.status_code == 200, f"Пользователь {login} не был активирован"
         return response
 
-    def user_login(self, login: str, password: str, remember_me: bool = True, is_validated=False):
+    def user_login(
+            self,
+            login: str,
+            password: str,
+            remember_me: bool = True,
+            is_validated=False,
+            validate_headers=False
+    ):
+
         login_credentials = LoginCredentials(
             login=login,
             password=password,
             remember_me=remember_me
         )
 
-        response = self.dm_account_api.login_api.post_v1_account_login(login_credentials=login_credentials,
-                                                                       is_validated=is_validated)
-        # Закомменченно, так как подходит не для всех тестов, где-то жду 403
-        # assert response.status_code == 200, f"Пользователь {login} не авторизован"
+        response = self.dm_account_api.login_api.post_v1_account_login(
+            login_credentials=login_credentials,
+            is_validated=is_validated
+        )
+
+        if validate_headers:
+            # Закомменченно, так как подходит не для всех тестов, где-то жду 403
+            assert response.headers["x-dm-auth-token"], "Token x-dm-auth-token wasn't retreived"
+            assert response.status_code == 200, f"Пользователь {login} не авторизован"
         return response
 
     @retry(stop_max_attempt_number=5, retry_on_result=retry_if_result_none, wait_fixed=1000)
@@ -89,11 +102,13 @@ class AccountHelper:
             login: str,
             password: str
     ):
+
         login_credentials = LoginCredentials(
             login=login,
             password=password,
             remember_me=True
         )
+
         response = self.dm_account_api.login_api.post_v1_account_login(login_credentials=login_credentials)
         token = {
             "x-dm-auth-token": response.headers["x-dm-auth-token"]

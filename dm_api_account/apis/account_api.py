@@ -25,7 +25,8 @@ class AccountApi(RestClient):
 
     def put_v1_account_token(
             self,
-            token
+            token,
+            is_validated=False
     ):
         """
         Activate registered user
@@ -41,16 +42,18 @@ class AccountApi(RestClient):
             headers=headers,
             params=token
         )
-        UserEnvelope(**response.json())
+        if is_validated:
+            UserEnvelope(**response.json())
         return response
 
     def put_v1_account_email(
             self,
-            registration: Registration
+            registration: Registration,
+            is_validated=False
     ):
         """
         Change registered user email
-        :param json_data:
+        :param registration:
         :return:
         """
         url = f"/v1/account/email"
@@ -58,11 +61,13 @@ class AccountApi(RestClient):
             path=url,
             json=registration.model_dump(exclude_none=True, by_alias=True)
         )
-        UserEnvelope(**response.json())
+        if is_validated:
+            UserEnvelope(**response.json())
         return response
 
     def get_v1_account(
             self,
+            is_validated=False,
             **kwargs
     ):
         """
@@ -74,12 +79,14 @@ class AccountApi(RestClient):
             path=url,
             **kwargs
         )
-        UserDetailsEnvelope(**response.json())
+        if is_validated:
+            UserDetailsEnvelope(**response.json())
         return response
 
     def put_v1_account_password(
             self,
             change_password: ChangePassword,
+            is_validated=False,
             **kwargs
     ):
         """
@@ -92,12 +99,14 @@ class AccountApi(RestClient):
             json=change_password.model_dump(exclude_none=True, by_alias=True),
             **kwargs
         )
-        UserEnvelope(**response.json())
+        if is_validated:
+            UserEnvelope(**response.json())
         return response
 
     def post_v1_account_password(
         self,
         reset_password: ResetPassword,
+        is_validated=False,
         **kwargs
     ):
         """
@@ -110,5 +119,6 @@ class AccountApi(RestClient):
             json=reset_password.model_dump(exclude_none=True),
             **kwargs
         )
-        UserEnvelope(**response.json())
+        if is_validated:
+            UserEnvelope(**response.json())
         return response
