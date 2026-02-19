@@ -7,7 +7,7 @@ class LoginApi(RestClient):
     def post_v1_account_login(
             self,
             login_credentials: LoginCredentials,
-            is_validated=True
+            is_validated=False
     ):
         """
         Authenticate via credentials
@@ -21,7 +21,7 @@ class LoginApi(RestClient):
             json=login_credentials.model_dump(exclude_none=True, by_alias=True)
         )
         if is_validated:
-            UserEnvelope(**response.json())
+            return UserEnvelope(**response.json())
         return response
 
     def delete_v1_account_login(
