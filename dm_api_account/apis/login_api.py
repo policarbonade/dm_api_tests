@@ -6,7 +6,7 @@ from restclient.client import RestClient
 class LoginApi(RestClient):
     def post_v1_account_login(
             self,
-            login_credentials=LoginCredentials,
+            login_credentials: LoginCredentials,
             is_validated=True
     ):
         """
