@@ -34,7 +34,7 @@ class AccountHelper:
         assert response.status_code == 200, f"Пользователь {login} не был активирован"
         return response
 
-    def user_login(self, login: str, password: str, remember_me: bool = True):
+    def user_login(self, login: str, password: str, remember_me: bool = True, is_validated=False):
         login_credentials = LoginCredentials(
             login=login,
             password=password,
@@ -42,7 +42,7 @@ class AccountHelper:
         )
 
         response = self.dm_account_api.login_api.post_v1_account_login(login_credentials=login_credentials,
-                                                                       is_validated=False)
+                                                                       is_validated=is_validated)
         # Закомменченно, так как подходит не для всех тестов, где-то жду 403
         # assert response.status_code == 200, f"Пользователь {login} не авторизован"
         return response
