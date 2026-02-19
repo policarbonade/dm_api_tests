@@ -1,5 +1,4 @@
 from datetime import datetime
-
 from hamcrest import (
     assert_that,
     has_property,

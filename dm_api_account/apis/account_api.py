@@ -80,7 +80,7 @@ class AccountApi(RestClient):
             **kwargs
         )
         if is_validated:
-            UserDetailsEnvelope(**response.json())
+            return UserDetailsEnvelope(**response.json())
         return response
 
     def put_v1_account_password(
