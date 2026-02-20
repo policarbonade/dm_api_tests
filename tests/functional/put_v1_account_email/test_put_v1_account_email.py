@@ -1,14 +1,4 @@
-import pprint
-from json import loads
-
-import pytest
-
-from restclient.configuration import Configuration as MailhogConfiguration
-from restclient.configuration import Configuration as DmApiConfiguration
-from services.api_mailhog import MailHogApi
-from services.dm_api_account import DmApiAccount
-from helpers.account_helper import AccountHelper
-import time
+from checkers.http_checkers import check_status_code_http
 
 
 def test_put_v1_account_email(prepare_user, account_helper):
@@ -28,8 +18,11 @@ def test_put_v1_account_email(prepare_user, account_helper):
     assert response.status_code == 200, f"Смена почты для пользователя {login} неуспешна"
 
     # Попытка входа с 403 ошибкой
-    response = account_helper.user_login(login=login, password=password, remember_me=True)
-    assert response.status_code == 403, f"Пользователь {login} не авторизован"
+    with check_status_code_http(
+        expected_message="User is inactive. Address the technical support for more details",
+        expected_status_code=403
+    ):
+        account_helper.user_login(login=login, password=password, remember_me=True)
 
     account_helper.activate(login=login)
 
