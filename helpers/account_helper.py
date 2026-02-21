@@ -18,7 +18,7 @@ class AccountHelper:
         self.dm_account_api = dm_account_api
         self.mailhog = mailhog
 
-    def register_user(self, login:str, password:str, email:str):
+    def register_user(self, login: str, password: str, email: str):
 
         registration = Registration(
             login=login,
@@ -32,6 +32,17 @@ class AccountHelper:
         assert token is not None, f"Токен для пользователя {login} не был получен"
         response = self.dm_account_api.account_api.put_v1_account_token(token=token)
         assert response.status_code == 200, f"Пользователь {login} не был активирован"
+        return response
+
+    def post_v1_account_isolation(self, login: str, email: str, password: str):
+
+        registration = Registration(
+            login=login,
+            email=email,
+            password=password
+        )
+
+        response = self.dm_account_api.account_api.post_v1_account(registration=registration)
         return response
 
     def user_login(
@@ -55,9 +66,7 @@ class AccountHelper:
         )
 
         if validate_headers:
-            # Закомменченно, так как подходит не для всех тестов, где-то жду 403
-            # assert response.headers["x-dm-auth-token"], "Token x-dm-auth-token wasn't retreived"
-            assert response.status_code == 200, f"Пользователь {login} не авторизован"
+            assert response.headers["x-dm-auth-token"], "Token x-dm-auth-token wasn't retreived"
         return response
 
     @retry(stop_max_attempt_number=5, retry_on_result=retry_if_result_none, wait_fixed=1000)
