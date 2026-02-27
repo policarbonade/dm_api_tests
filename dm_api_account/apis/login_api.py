@@ -1,9 +1,12 @@
+import allure
+
 from models.login_credentials import LoginCredentials
 from models.user_envelope import UserEnvelope
 from restclient.client import RestClient
 
 
 class LoginApi(RestClient):
+    @allure.step("Авторизоваться")
     def post_v1_account_login(
             self,
             login_credentials: LoginCredentials,
@@ -24,12 +27,13 @@ class LoginApi(RestClient):
             return UserEnvelope(**response.json())
         return response
 
+    @allure.step("Деавторизация")
     def delete_v1_account_login(
         self,
         **kwargs
     ):
         """
-        Reset registered user email
+        Logout
         :return:
         """
         url = f"/v1/account/login"
@@ -40,12 +44,13 @@ class LoginApi(RestClient):
 
         return response
 
+    @allure.step("Полная деавторизация")
     def delete_v1_account_login_all(
         self,
         **kwargs
     ):
         """
-        Reset registered user email
+        Logout all active sessions
         :return:
         """
         url = f"/v1/account/login/all"

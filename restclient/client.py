@@ -3,8 +3,8 @@ import structlog
 import uuid
 from json import JSONDecodeError
 import curlify
-
 from restclient.configuration import Configuration
+from restclient.utilites import allure_attach
 
 
 class RestClient:
@@ -34,6 +34,7 @@ class RestClient:
     def delete(self, path, **kwargs):
         return self._send_request(method='DELETE', path=path, **kwargs)
 
+    @allure_attach
     def _send_request(
             self,
             method,

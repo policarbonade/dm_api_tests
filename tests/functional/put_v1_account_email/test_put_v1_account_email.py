@@ -1,6 +1,9 @@
+import allure
+
 from checkers.http_checkers import check_status_code_http
 
 
+@allure.title("Тест на попытку входа в аккаунт после смены емайл")
 def test_put_v1_account_email(prepare_user, account_helper):
     # Регистрация пользователя
     login = prepare_user.login
