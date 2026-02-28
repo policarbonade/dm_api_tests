@@ -1,4 +1,5 @@
 import pytest
+from swagger_coverage_py.reporter import CoverageReporter
 from restclient.configuration import Configuration as DmApiConfiguration
 from restclient.configuration import Configuration as MailhogConfiguration
 from services.dm_api_account import DmApiAccount
@@ -32,6 +33,15 @@ def pytest_addoption(parser):
     parser.addoption("--env", action="store_true", default="stage", help="run stage")
     for option in options:
         parser.addoption(f"--{option}", action="store", default=None)
+
+
+@pytest.fixture(scope="session", autouse=True)
+def setup_swagger_coverage():
+    reporter = CoverageReporter(api_name="dm-api-account", host="http://185.185.143.231:5051")
+    reporter.cleanup_input_files()
+    reporter.setup("/swagger/Account/swagger.json")
+    yield
+    reporter.generate_report()
 
 
 @pytest.fixture(autouse=True)
