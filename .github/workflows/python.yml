@@ -66,5 +66,5 @@ jobs:
         uses: actions/upload-pages-artifact@v2
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@1.2.9
+        uses: actions/deploy-pages@4
       - run: echo ${{ steps.deployment.outputs.page_url }}
