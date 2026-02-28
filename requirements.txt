@@ -33,4 +33,4 @@ typing_extensions==4.15.0
 urllib3==2.6.3
 vyper-config==1.2.1
 watchdog==6.0.0
-swagger-coverage==3.5.1
+swagger-coverage @ https://github.com/policarbonade/swagger-coverage-py/archive/refs/heads/master.zip
