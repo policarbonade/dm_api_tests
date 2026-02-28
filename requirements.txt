@@ -3,6 +3,7 @@ assertpy==1.1
 certifi==2026.1.4
 charset-normalizer==3.4.4
 curlify==3.0.0
+distconfig3==1.0.1
 idna==3.11
 iniconfig==2.3.0
 packaging==26.0
@@ -12,9 +13,13 @@ pydantic_core==2.41.5
 Pygments==2.19.2
 PyHamcrest==2.1.0
 pytest==9.0.2
+PyYAML==6.0.3
 requests==2.32.5
 retrying==1.4.2
 structlog==25.5.0
+toml==0.10.2
 typing-inspection==0.4.2
 typing_extensions==4.15.0
 urllib3==2.6.3
+vyper-config==1.2.1
+watchdog==6.0.0
