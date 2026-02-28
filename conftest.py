@@ -1,3 +1,5 @@
+import os
+
 import pytest
 from swagger_coverage_py.reporter import CoverageReporter
 from restclient.configuration import Configuration as DmApiConfiguration
@@ -26,6 +28,8 @@ options = (
     'service.mailhog',
     'user.login',
     'user.password',
+    'telegram.chat_id',
+    'telegram.token',
 )
 
 
@@ -49,13 +53,15 @@ def setup_swagger_coverage():
 def set_config(request):
     config = Path(__file__).joinpath("../").joinpath("config")
     config_name = request.config.getoption("--env")
-    print(config)
-    print(config_name)
     v.set_config_name(config_name)
     v.add_config_path(config)
     v.read_in_config()
     for option in options:
         v.set(f"{option}", request.config.getoption(f"--{option}"))
+    os.environ["TELEGRAM_BOT_CHAT_ID"] = v.get("telegram.chat_id")
+    os.environ["TELEGRAM_BOT_ACCESS_TOKEN"] = v.get("telegram.token")
+    request.config.stash["telegram-notifier-addfields"]["environment"] = config_name
+    request.config.stash["telegram-notifier-addfields"]["report"] = "https://policarbonade.github.io/dm_api_tests/"
 
 
 @pytest.fixture
