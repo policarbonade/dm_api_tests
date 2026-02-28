@@ -38,10 +38,10 @@ def pytest_addoption(parser):
 @pytest.fixture(scope="session", autouse=True)
 def setup_swagger_coverage():
     reporter = CoverageReporter(api_name="dm-api-account", host="http://185.185.143.231:5051")
-    reporter.cleanup_input_files()
-    reporter.setup("/swagger/Account/swagger.json")
+    reporter.setup("/swagger/Account/swagger.json?urls.primaryName=Account")
     yield
     reporter.generate_report()
+    reporter.cleanup_input_files()
 
 
 @pytest.fixture(autouse=True)
