@@ -63,7 +63,7 @@ class RestClient:
 
         rest_response = self.session.request(method=method, url=full_url, **kwargs)
         curl = curlify.to_curl(rest_response.request)
-
+        # TODO ...
         uri = URI(host=self.host, base_path="", unformatted_path=path, uri_params=kwargs.get("params"))
         RequestSchemaHandler(
             uri, method.lower(), rest_response, kwargs
