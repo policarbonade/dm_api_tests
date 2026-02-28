@@ -45,7 +45,7 @@ class AccountApi(RestClient):
         response = self.put(
             path=url,
             headers=headers,
-            params=token
+            params={'token': token}
         )
         if is_validated:
             UserEnvelope(**response.json())
