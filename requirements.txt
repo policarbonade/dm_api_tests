@@ -29,7 +29,7 @@ rootpath==0.1.0
 setuptools==82.0.0
 six==1.17.0
 structlog==25.5.0
-swagger-coverage @ https://github.com/policarbonade/swagger-coverage-py/archive/refs/heads/master.zip#sha256=36efadc38ef1f2eaf14cbb2dedd2d62369acf88a43a13b140f1936cf27cf19af
+swagger-coverage @ https://github.com/policarbonade/swagger-coverage-py/archive/refs/heads/master.zip#sha256=f59e994450dafc82913165143e6753860394234d81cb99c4587324c71d081fb7
 telebot==0.0.5
 toml==0.10.2
 typing-inspection==0.4.2
