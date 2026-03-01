@@ -41,6 +41,7 @@ jobs:
       - name: Run coverage
         if: ${{ always() }}
         run: |
+          ls
           python -m packages.notifier.bot
 
       - name: Archive allure results
