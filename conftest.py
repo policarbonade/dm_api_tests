@@ -73,7 +73,7 @@ def account_api():
 
 @pytest.fixture
 def mailhog_api():
-    mailhog_configuration = MailhogConfiguration(host=v.get("service.mailhog"), disable_log=False)
+    mailhog_configuration = MailhogConfiguration(host=v.get("service.mailhog"), disable_log=True)
     mailhog = MailHogApi(configuration=mailhog_configuration)
     return mailhog
 
