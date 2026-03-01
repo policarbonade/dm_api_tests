@@ -35,7 +35,7 @@ jobs:
       - name: Run tests
         run: |
           export JAVA_HOME=$JAVA_HOME
-          java -version
+          which java
           DEBUG_MODE=true pytest -s -vv ./tests --alluredir=allure-results --disable-warnings
 #          pytest ./tests --alluredir=allure-results --disable-warnings
         continue-on-error: true
