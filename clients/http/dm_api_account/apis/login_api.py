@@ -1,8 +1,7 @@
 import allure
-
 from models.login_credentials import LoginCredentials
 from models.user_envelope import UserEnvelope
-from restclient.client import RestClient
+from packages.restclient.client import RestClient
 
 
 class LoginApi(RestClient):

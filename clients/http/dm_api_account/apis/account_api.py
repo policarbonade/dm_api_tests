@@ -5,8 +5,7 @@ from models.registration import Registration
 from models.reset_password import ResetPassword
 from models.user_details_envelope import UserDetailsEnvelope
 from models.user_envelope import UserEnvelope
-from restclient.client import RestClient
-from restclient.utilites import allure_attach
+from packages.restclient.client import RestClient
 
 
 class AccountApi(RestClient):

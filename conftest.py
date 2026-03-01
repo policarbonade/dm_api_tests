@@ -2,8 +2,8 @@ import os
 
 import pytest
 from swagger_coverage_py.reporter import CoverageReporter
-from restclient.configuration import Configuration as DmApiConfiguration
-from restclient.configuration import Configuration as MailhogConfiguration
+from packages.restclient.configuration import Configuration as DmApiConfiguration
+from packages.restclient.configuration import Configuration as MailhogConfiguration
 from services.dm_api_account import DmApiAccount
 from services.api_mailhog import MailHogApi
 from helpers.account_helper import AccountHelper
