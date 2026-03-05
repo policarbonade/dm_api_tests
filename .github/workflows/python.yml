@@ -26,7 +26,7 @@ jobs:
 
       - name: Set JAVA_HOME
         run: |
-          run: echo "JAVA_HOME=$(dirname $(dirname $(readlink -f $(which java))))" >> $GITHUB_ENV
+          echo "JAVA_HOME=$(dirname $(dirname $(readlink -f $(which java))))" >> $GITHUB_ENV
 
       - name: Install dependencies
         run: |
