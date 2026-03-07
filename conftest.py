@@ -1,9 +1,9 @@
 import os
+import uuid
 
 import pytest
 from swagger_coverage_py.reporter import CoverageReporter
-from packages.restclient.configuration import Configuration as DmApiConfiguration
-from packages.restclient.configuration import Configuration as MailhogConfiguration
+from packages.restclient.configuration import Configuration
 from services.dm_api_account import DmApiAccount
 from services.api_mailhog import MailHogApi
 from helpers.account_helper import AccountHelper
@@ -43,10 +43,10 @@ def pytest_addoption(parser):
 @pytest.fixture(scope="session", autouse=True)
 def setup_swagger_coverage():
     reporter = CoverageReporter(api_name="dm-api-account", host="http://185.185.143.231:5051")
-    reporter.cleanup_input_files()
-    reporter.setup("/swagger/Account/swagger.json?urls.primaryName=Account")
+    reporter.setup("/swagger/Account/swagger.json")
     yield
     reporter.generate_report()
+    reporter.cleanup_input_files()
 
 
 @pytest.fixture(autouse=True)
@@ -66,14 +66,14 @@ def set_config(request):
 
 @pytest.fixture
 def account_api():
-    dm_api_configuration = DmApiConfiguration(host=v.get("service.dm_api_account"))
+    dm_api_configuration = Configuration(host=v.get("service.dm_api_account"), disable_log=False)
     account = DmApiAccount(configuration=dm_api_configuration)
     return account
 
 
 @pytest.fixture
 def mailhog_api():
-    mailhog_configuration = MailhogConfiguration(host=v.get("service.mailhog"), disable_log=False)
+    mailhog_configuration = Configuration(host=v.get("service.mailhog"), disable_log=False)
     mailhog = MailHogApi(configuration=mailhog_configuration)
     return mailhog
 
@@ -86,7 +86,7 @@ def account_helper(account_api, mailhog_api):
 
 @pytest.fixture
 def auth_account_helper(mailhog_api):
-    dm_api_configuration = DmApiConfiguration(host=v.get("service.dm_api_account"), disable_log=False)
+    dm_api_configuration = Configuration(host=v.get("service.dm_api_account"), disable_log=False)
     account = DmApiAccount(configuration=dm_api_configuration)
     account_helper = AccountHelper(dm_account_api=account, mailhog=mailhog_api)
     account_helper.auth_client(
