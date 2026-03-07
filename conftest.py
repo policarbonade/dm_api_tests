@@ -73,7 +73,7 @@ def account_api():
 
 @pytest.fixture
 def mailhog_api():
-    mailhog_configuration = MailhogConfiguration(host=v.get("service.mailhog"), disable_log=True)
+    mailhog_configuration = MailhogConfiguration(host=v.get("service.mailhog"), disable_log=False)
     mailhog = MailHogApi(configuration=mailhog_configuration)
     return mailhog
 
@@ -86,7 +86,7 @@ def account_helper(account_api, mailhog_api):
 
 @pytest.fixture
 def auth_account_helper(mailhog_api):
-    dm_api_configuration = DmApiConfiguration(host=v.get("service.dm_api_account"), disable_log=True)
+    dm_api_configuration = DmApiConfiguration(host=v.get("service.dm_api_account"), disable_log=False)
     account = DmApiAccount(configuration=dm_api_configuration)
     account_helper = AccountHelper(dm_account_api=account, mailhog=mailhog_api)
     account_helper.auth_client(
