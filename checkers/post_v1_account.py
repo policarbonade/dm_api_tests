@@ -1,4 +1,6 @@
 from datetime import datetime
+
+import allure
 from assertpy import assert_that
 from hamcrest import (
     has_property,
@@ -12,6 +14,8 @@ from hamcrest import (
 
 class PostV1Account:
     @classmethod
+
+    @allure.step("Валидация значений ответа")
     def check_response_values(cls, response, login):
         today = datetime.now().strftime("%Y_%m_%d")
         assert_that(str(response.resource.registration), starts_with(today))
